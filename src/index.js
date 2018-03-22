@@ -1,28 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Root from './components/Root/Root';
+import {Provider} from "react-redux";
 
 import {createStore} from "redux";
 
-import app from "../src/reducers/index";
+import rootReducer from "../src/reducers/index";
+import RootContainer from "./containers/RootContainer";
 
-let store = createStore(app);
+let store = createStore(rootReducer);
 
-const render =  () => ReactDOM.render(
-    <Root
-        inputValue = {store.getState().handleInput}
-        handleInput = {(e) => store.dispatch({type: "HANDLE_INPUT", data: e.target.value})}
-        addGuest = {(e) => {
-            if (e.key == "Enter") {
-                store.dispatch({type : "ADD_GUEST", data: store.getState().handleInput})
-            }
-        }}
-
-        guests = {store.getState().guests}
-        removeGuest = {(i) => store.dispatch({type: "REMOVE_GUEST", index: i,
-            guests:store.getState().guests})}
-    />,
+ReactDOM.render(
+    <Provider store={store}>
+        <RootContainer/>
+    </Provider>,
     document.getElementById("root"));
-
-render();
-store.subscribe(render);

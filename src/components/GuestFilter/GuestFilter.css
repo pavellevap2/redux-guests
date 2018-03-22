@@ -1,0 +1,7 @@
+.GuestFilter {
+    display: flex;
+}
+li{
+    list-style: none;
+    padding: 12px;
+}

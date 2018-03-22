@@ -1,69 +1,55 @@
 import React from "react";
+import GuestContainer from "../../containers/GuestContainer";
+import GuestFilter from "../../components/GuestFilter/GuestFilter"
 
-class RootGuestInput extends React.Component {
-     constructor(props) {
-         super(props);
-         this.state = {
-             isTextField: false,
-             changedGuest: ""
-         }
-     }
-    render(){
-        let {isTextField} = this.state;
-        let {guest, removeGuest, updateGuest} = this.props;
+const countGuests = (guests) => {
+    let guestsNumber = guests.length;
+    guests.forEach(guest => (!guest.alone) ? guestsNumber += 1: guestsNumber +=0) ;
 
-         return(
-            <div>
-                {!isTextField
-                    ? <p onDoubleClick={() => this.setState({isTextField: true})}>
-                        {guest.name}
-                        <input type="checkbox"
-                               onClick={() => guest.alone = !guest.alone }
-                        />
-                        <button onClick={removeGuest}>X</button>
-                    </p>
+    return guestsNumber
+};
 
-                    : <input
-                        onBlur={() => {
-                            this.setState({isTextField : false});
-
-                        }}
-                        value= {guest.name}
-                        onChange={(e) => this.setState({changedGuest: e.target.value})}
-                    />
-                }
-            </div>
-        )
-    }
-
-}
 
 class Root extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            numberOfGuests: "",
+            guestsNumber: 0,
+            guestsType: "all"//all(все гости),alone(без пары),notAlone(c парой)
         }
     }
 
     render(){
-        let {handleInput, inputValue, addGuest, guests, removeGuest} = this.props;
+        const {guest, updateNewGuest, addGuest, guests} = this.props;
+        let {guestsType} = this.state;
 
+        let lonelyGuests = guests.filter(guest => guest.alone);
+        let notLonelyGuests = guests.filter(guest => !guest.alone);
+        let currGuestList = guestsType == "all" ? guests : guestsType == "alone" ? lonelyGuests : notLonelyGuests;
         return(
             <div>
-                <input type="text" value={inputValue}
-                       onChange={handleInput}
-                       onKeyPress={addGuest}/>
-                <h3>number of guests</h3>
+                <input type="text" value={guest}
+                       onChange={(e) => updateNewGuest(e.target.value)}
+                       onKeyPress={(e) =>{
+                           if(e.key == "Enter"){
+                               addGuest(guest);
+                           }
+                       }}/>
+
+                <h3>number of guests {countGuests(guests)}</h3>
+
+                <GuestFilter
+                    guestsTypeAll={() => this.setState({guestsType: "all"})}
+                    guestsTypeAlone={() => this.setState({guestsType: "alone"})}
+                    guestsTypeNotAlone={() => this.setState({guestsType: "notAlone"})}/>
 
                 <div>
                     <ul>
-                        {guests.map((guest, i) =>
+                        {currGuestList.map((guest, i) =>
                             <div key={i}>
-                               <RootGuestInput
-                                   guest= {guest}
-                                   removeGuest={() => removeGuest(i)}
-                               />
+                                <GuestContainer
+                                    guest={guest}
+                                    index={i}/>
                             </div>
                         )}
                     </ul>
