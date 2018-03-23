@@ -1,13 +1,14 @@
-import {UPDATE_NEW_GUEST, ADD_GUEST} from "../actions/actions";
+import { UPDATE_NEW_GUEST, ADD_GUEST } from '../actions/actions'
 
-const guest = (guest = "", action) => {
-    if (action.type == UPDATE_NEW_GUEST ) {
-        return action.payload.name ;
-    } else if (action.type == ADD_GUEST  ) {
-        return "";
-    } else {
-        return guest;
-    }
-};
+const guest = (guest = '', action) => {
+  switch (action.type) {
+    case UPDATE_NEW_GUEST:
+      return action.payload
+    case ADD_GUEST:
+      return ''
+    default:
+      return guest
+  }
+}
 
-export default guest;
+export default guest
